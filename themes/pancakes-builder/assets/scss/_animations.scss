@@ -1,0 +1,149 @@
+[data-aos="reveal-left"] {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  &::before {
+    position: absolute;
+    content: '';
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background color should be the same as the section background. This is defined in the partial file inline */
+    transition: all 1.5s ease;
+  }
+  img {
+    width: 100%;
+  }
+  &.aos-animate {
+    opacity: 1;
+    &::before {
+      left: 100%;
+      opacity: 1;
+    }
+  }
+}
+.cls-1 {
+  opacity: 1;
+}
+.cls-2 {
+  opacity: 1;
+}
+.cls-3 {
+  opacity: 1;
+}
+@-webkit-keyframes loading-header {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.loading .logo-link .cls-1, .logo-link a.page-link:hover .cls-1 {
+  -webkit-animation: loading-header 0.5s ease-in-out infinite; /* Safari 4+ */
+  -moz-animation:    loading-header 0.5s ease-in-out infinite; /* Fx 5+ */
+  -o-animation:      loading-header 0.5s ease-in-out infinite; /* Opera 12+ */
+  animation:         loading-header 0.5s ease-in-out infinite; /* IE 10+, Fx 29+ */
+  animation-direction: alternate;
+  animation-delay: 0s;
+}
+.loading .logo-link .cls-2, .logo-link a.page-link:hover .cls-2 {
+  -webkit-animation: loading-header 0.5s ease-in-out infinite; /* Safari 4+ */
+  -moz-animation:    loading-header 0.5s ease-in-out infinite; /* Fx 5+ */
+  -o-animation:      loading-header 0.5s ease-in-out infinite; /* Opera 12+ */
+  animation:         loading-header 0.5s ease-in-out infinite; /* IE 10+, Fx 29+ */
+  animation-direction: alternate;
+  animation-delay: 0.15s;
+}
+.loading .logo-link .cls-3, .logo-link a.page-link:hover .cls-3 {
+  -webkit-animation: loading-header 0.5s ease-in-out infinite; /* Safari 4+ */
+  -moz-animation:    loading-header 0.5s ease-in-out infinite; /* Fx 5+ */
+  -o-animation:      loading-header 0.5s ease-in-out infinite; /* Opera 12+ */
+  animation:         loading-header 0.5s ease-in-out infinite; /* IE 10+, Fx 29+ */
+  animation-direction: alternate;
+  animation-delay: 0.30s;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@-webkit-keyframes intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* ==========================================================================
+   Home page mouse scroll indicator
+   ========================================================================== */
+@media screen and (min-width: $screen-laptop) {
+.mouse {
+  display: block;
+  width: 28px;
+  height: 48px;
+  border-radius: 11px 11px 15px 15px;
+  border: 1px solid #fff;
+  position: fixed;
+  left: 50%;
+  bottom: 5%;
+  margin-left: -13px;
+  z-index: 9999;
+}
+
+.mouse span {
+  display: block;
+  margin: 6px auto;
+  width: 2px;
+  height: 5px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid transparent;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-name: scroll;
+  animation-name: scroll;
+}
+
+@keyframes scroll {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+    }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    -ms-transform: translateY(20px);
+    transform: translateY(20px);
+    }
+}
+}
+@media screen and (max-width: $screen-laptop) {
+  .mouse {
+    display: none;
+  }
+}

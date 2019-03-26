@@ -1,0 +1,20 @@
+{{ if or (.page.background_image) ( .page.background_color ) }}
+    <style>
+    {{ if .page.background_color }}
+    section#{{ .global.Scratch.Get "section_id" }}
+    {{ print "{" | safeCSS }}
+        background-color: {{ .page.background_color }};
+    {{ print "}" | safeCSS }}
+    {{ end }}
+    {{ if .page.background_image }}
+    {{ $upload_image := resources.Get .page.background_image }}
+    {{ $upload_image_resize := $upload_image.Resize "1920x q100" }}
+    section#{{ .global.Scratch.Get "section_id" }}
+    {{ print "{" | safeCSS }}
+        background-image: url({{ $upload_image_resize.Permalink }});
+        background-repeat: no-repeat;
+        background-size: cover;
+    {{ print "}" | safeCSS }}
+    {{ end }}
+    </style>
+{{ end }}

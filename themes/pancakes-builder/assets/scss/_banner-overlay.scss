@@ -1,0 +1,165 @@
+
+.background-parallax {
+	position: relative;
+	background-attachment: fixed;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	min-height: 100%;
+  }
+.hero-overlay {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	pointer-events: none;
+}
+.hero-overlay p {
+	margin: auto;
+}
+.hero.done .hero-overlay {
+	z-index: 100;
+	opacity: 1;
+	pointer-events: all;
+}
+.hero-buttons {
+	margin-top: 40px;
+}
+.hero-buttons svg {
+	fill: white;
+}
+.hero-buttons a:nth-last-child(-n+2),
+.done .spinner {
+	display: none;
+}
+
+// Video -----------------------------------------------------------------------
+.hero iframe {
+	opacity: 0;
+	transition: 0.2s linear opacity;
+	pointer-events: none;
+}
+.hero.play.muted {
+	pointer-events: none;
+}
+.hero.play iframe {
+	opacity: 1;
+	pointer-events: all;
+}
+.hero.play {
+	pointer-events: all;
+}
+
+// Replay ----------------------------------------------------------------------
+.hero-replay {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 100;
+	justify-content: center;
+	min-height: 100px;
+	width: 100%;
+	height: 30%;
+	opacity: 0;
+	transition: $transition-opacity;
+	pointer-events: none;
+}
+.hero-replay a {
+	align-self: flex-end;
+	margin-bottom: 4%;
+	background: #FFF;
+	box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.08);
+	color: #000;
+	transition: $transition-opacity;
+}
+.hero-replay a:hover {
+	opacity: 0.9;
+}
+.play.muted .hero-replay {
+	opacity: 1;
+	pointer-events: all;
+}
+.sound-bars {
+	position: relative;
+	top: -1px;
+	margin-right: 14px;
+	width: 10px;
+	height: 14px;
+}
+.sound-bars > div {
+	position: absolute;
+	bottom: 0;
+	width: 2px;
+	height: 2px;
+	background: black;
+	animation: sound 0ms linear infinite alternate;
+}
+.sound-bars > div:nth-child(1) {
+	animation-duration: 550ms;
+}
+.sound-bars > div:nth-child(2) {
+	left: 4px;
+	animation-duration: 500ms;
+}
+.sound-bars > div:nth-child(3) {
+	left: 8px;
+	animation-duration: 450ms;
+}
+@keyframes sound {
+	0% {
+		height: 2px;
+	}
+	100% {
+		height: 14px;
+	}
+}
+
+// Controls --------------------------------------------------------------------
+.controls {
+	position: absolute;
+	bottom: 15px;
+	left: 26px;
+	z-index: 200;
+	opacity: 1;
+	transition: $transition-opacity;
+}
+.muted .controls {
+	opacity: 0;
+}
+.controls a {
+	display: inline-block;
+	overflow: hidden;
+	margin-right: 14px;
+	width: 18px;
+	text-indent: -9999px;
+}
+.controls a:hover,
+.done .controls a:hover {
+	opacity: 1;
+}
+.controls-playback {
+	background: url("https://framer.com/assets/static/images/frontpage/video-pause.svg") no-repeat center;
+}
+.controls-playback.paused {
+	background: url("https://framer.com/assets/static/images/frontpage/video-play.svg") no-repeat center;
+}
+.controls-fullscreen {
+	background: url("https://framer.com/assets/static/images/frontpage/video-fullscreen.svg") no-repeat center;
+	opacity: 0.4;
+}
+.controls-replay {
+	position: relative;
+	display: none;
+	background: url("https://framer.com/assets/static/images/frontpage/video-replay.svg") no-repeat center;
+	opacity: 0.4;
+}
+.done .controls a {
+	opacity: 0.4;
+	pointer-events: none;
+}
+.done a.controls-replay {
+	display: inline-block;
+	opacity: 1;
+	pointer-events: all;
+}

@@ -1,0 +1,576 @@
+<!--.global $-->
+<!--.page .-->
+{{ $env := getenv "HUGO_ENV" }}
+<!--define the $scratch var-->
+{{ $scratch := .global.Scratch }}
+<!--if the user deletes the preset container value, default to the wide value-->
+{{ $container := .page.size | default "wide" }}
+<!--define the default row width-->
+<!--container value is defined-->
+{{ $scratch.Set "container_size" $container }}
+{{ $scratch.Set "device_break" "break-tablet" }}
+<!--set global section options for the content alignment-->
+{{ $h_content := .page.h_content | default "space-between" }}
+{{ $scratch.Set "h_content" $h_content }}
+{{ $v_content := .page.v_content | default "center" }}
+{{ $scratch.Set "v_content" $v_content }}
+{{ $scratch.Set "mobile_order" "" }}
+{{ $scratch.Set "page_slug" .page_slug }}
+
+<!--display the WYSIYG editor depending on the front matter position of the template named "content"-->
+
+{{ if in .page.template "content" }}
+<!--enable debug for elements-->
+
+<!--end debug for elements-->
+<div class="{{ .page.container_size | default "container" }} content-editor">
+    {{ if eq $.global.Site.Params.debug_bar_settings.enable_debug true | default true }}
+    {{ if or (eq $env "undefined") (eq $env "") (eq $env "staging") }}
+    <div class="debug-element-name">
+        <ul>
+            <li>Content Editor</li>
+        </ul>
+    </div>   
+    {{ end }} 
+    {{ end }}
+    {{ .global.Content }}
+</div>
+{{ end }}
+
+<!--loop of normal sections-->
+
+
+{{ if .page.row1 }}
+    {{ range or (.page.row1) (.page.row2) }}
+        {{ if in .template "options" }}
+        <!--grab the settings-->
+            {{ if .size }}
+                {{ $scratch.Set "container_size" .size }}
+            {{ end }}
+            {{ if .h_content }}
+                {{ $scratch.Set "h_content" .h_content }}
+            {{ end }}
+            {{ if .v_content }}
+                {{ $scratch.Set "v_content" .v_content }}
+            {{ end }}
+            {{ if eq .grid_layout true }}
+                {{ $scratch.Set "grid_layout" " wrap" }}
+            {{ end }}
+            {{ if .break }}
+                {{ $break := print "break-" .break }}
+                {{ $scratch.Set "device_break" $break }}
+            {{ else }}
+                {{ $scratch.Set "device_break" "break-tablet" }}
+            {{ end }}
+        {{ end }}
+       
+    {{ end }}
+
+    <!--start the row div-->
+    <div id="row" class="row flex-container{{ $scratch.Get "grid_layout" }} h_content_{{ $scratch.Get "h_content" }} {{ $scratch.Get "container_size" }} padding-{{ .row_space | default "none" }}-bottom {{ $scratch.Get "device_break" }} contain-tablet{{ if eq .grid_layout true }} wrap {{ end }}">
+    
+    <!--might need to change this to reflect current context-->
+    <!--ben remove this if debug is off-->
+    {{ partial "rows/dbg-menu.html" (dict "page" . "global" $ ) }}
+    <!--ben remove this if debug is off-->
+    
+        
+{{ range .page.row1 }}
+    {{ if in .template "column" }}
+        {{ if .v_content }}
+            {{ $scratch.Set "v_content" .v_content }}
+        {{ end }}
+        {{ if .h_content }}
+            {{ $scratch.Set "h_content" .h_content }}
+        {{ end }}
+        {{ if .text_align }}
+            {{ $col_text_align := .text_align | lower }}
+            {{ $scratch.Set "col_text_align" $col_text_align }}
+        {{ end }}
+        {{ range .options }}
+            {{ if in .template "options"}}
+                {{ if .mobile_order }}
+                {{ $mobile_order := print "mobile_order-" .mobile_order }}
+                {{ $scratch.Set "mobile_order" $mobile_order }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    <!--start the column-->
+    <div data-column-size="col-{{ .size | default "6" }}"{{ if .background_color }} style="background-color: {{ .background_color }}"{{ end }} class="flex-container flex-item column col-{{ .size | default "6" }} v_content_{{ $scratch.Get "v_content" }}{{ if .h_content }} h_content_{{ $scratch.Get "h_content" }}{{ end }}{{ if .background_color }} col_bg{{ end }} {{ $scratch.Get "mobile_order" }}" >
+    
+        <!--ben remove this if debug is off-->
+        {{ partial "cols/dbg-menu.html" (dict "page" . "global" $ ) }}
+        <!--ben remove this if debug is off-->
+
+        {{ range .elements }}
+            {{ if in .template "options" }}
+                {{ if .background_color }}
+                {{ $scratch.Set "elements_background" .background_color }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+        
+        
+        {{ $top_section := $.global.Scratch.Get "section_index" }}
+        {{ if eq $top_section 1 }}
+            {{ $scratch.Set "data_aos_offset" "-200" }}
+        {{ else }}
+            {{ $scratch.Set "data_aos_offset" "200" }}
+        {{ end }}
+        <!--element wrapper-->
+        <div{{ if .animate }} data-aos="{{ .animate }}" data-aos-offset="{{ $scratch.Get "data_aos_offset" }}" data-aos-anchor="#{{ $.global.Scratch.Get "section_id" }}"{{ end }} style="background-color: {{ $scratch.Get "elements_background" }}" class="elements-wrapper {{ if .content_width }} maxwidth-{{ .content_width | lower }}{{ end }}{{ if .padding_top }} padding-{{ .padding_top | lower }}-top{{ end }}{{ if .padding_bottom }} padding-{{ .padding_bottom | lower }}-bottom{{ end }}">
+        
+<!--enable debug for elements-->
+{{ if eq $.global.Site.Params.debug_bar_settings.enable_debug true | default true }}
+{{ $env := getenv "HUGO_ENV" }}
+    {{ if or (eq $env "undefined") (eq $env "") (eq $env "staging") }}
+    <div class="debug-element-name">
+        <ul>
+        {{ range $index, $debug_element_list := .elements }}
+        {{ $new_index := add $index 1 }}
+        {{ $human_element := .template | humanize }}
+                <li>{{ print $new_index "-" $human_element }}</li>
+        {{ end }}
+        </ul>
+    </div>   
+    {{ end }} 
+{{ end }}
+<!--end debug for elements-->
+
+        {{ range $index, $elements := .elements }}
+
+        {{ if in .template "title" }}
+        
+        {{ print "<" | safeHTML }}{{ print .tag }}{{ if or (or (isset . "text_align") (isset . "color" )) }} class="{{ if isset . "text_align" }}text-{{ .text_align }}{{ else }}text-align{{ $scratch.Get "col_text_align" }}{{ end }}{{ if isset . "color" }} color-{{ .color }}{{ end }}"{{ end }}{{ if isset . "font_color_hex" }} style="color: {{ .font_color_hex }};"{{ end }}{{ print ">" | safeHTML }}{{ .title }}{{ print "</" | safeHTML }}{{ print .tag }}{{ print ">" | safeHTML }}
+            
+        {{ end }}
+
+        {{ if in .template "text" }}
+        <div class="text-wrapper {{ if isset . "text_align" }}text-align-children-{{ .text_align }}{{ else }}text-align-children-{{ $scratch.Get "col_text_align" }}{{ end }}">
+            {{ .text | safeHTML }}
+        </div>
+        {{ end }}
+
+        {{ if in .template "html" }}
+        <div class="html-wrapper">
+            {{ .html | safeHTML }}
+        </div>
+        {{ end }}
+
+{{ if in .template "logo" }}
+
+{{ with $.global.Site.Data.layouts.header.default_header }}
+<div class="logo col-{{ .logo_column_size | default "4" }} flex-container v_content_center">
+        {{ if and (eq .logo_title_image true) ( .image ) }}
+            <a class="logo-a flex-container v_content_center" href="{{ if .logo_url }}{{ .logo_url }}{{ else }}{{ .Site.BaseURL }}{{ end }}">
+            <img src="{{ .image }}"> 
+            {{ if .logo_title }}{{ .logo_title | safeHTML }}{{ else }}{{ $.Site.Title }}{{ end }}
+            </a>
+        {{ else if .image }}
+        <a class="flex-container v_content_center" href="{{ if .logo_url }}{{ .logo_url }}{{ else }}{{ .Site.BaseURL }}{{ end }}">
+            <img src="{{ .image }}">
+        </a>
+        {{ end }}
+        </div>
+{{ end }}
+{{ end }}
+
+{{ if in .template "menu" }}
+<!--update this button in the header-->
+{{ $header_button := .button_type | default "primary" }}
+{{ if .text }}
+{{ $header_button := .button_type | default "primary" }}
+{{ end }}
+
+<!--the scope is changed to global-->
+{{ with $.global.Site.Data.layouts.header.default_header }}
+        
+        <div id="desktop-menu" class="flex-container v_content_center h_content_space-between">
+        {{ range $.global.Site.Menus.main }}
+        {{ if .HasChildren }}
+        <li class="with-sub">        
+            <a class="nav-link" href="{{ .URL }}">{{ .Name }} <svg width="9" height="5" viewBox="0 0 9 5">
+                    <polyline class="sub-arrow" fill="none" stroke="#999" points=".5 .5 4.5 4.5 8.5 .5"></polyline>
+                  </svg></a>
+            
+            <ul class="sub">
+            {{ range .Children }}
+                <li>
+                    <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+                </li>
+            {{ end }}
+            </ul>
+            
+        </li>
+        {{ else }}
+        <li>
+                <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+        </li>
+        {{ end }}
+    
+        {{ end }}
+        <a href="#" class="button-fill">{{ $header_button }}</a>
+    </div>
+    
+    <button class="hamburger hamburger--collapse-r" type="button">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+    </button>
+    </div>
+    <div id="mobile-menu" class="contain-tablet">
+        <div>
+            {{ range $.global.Site.Menus.main }}
+            {{ if .HasChildren }}
+            <li class="with-sub">        
+                <a class="nav-link" href="{{ .URL }}">{{ .Name }} <svg width="9" height="5" viewBox="0 0 9 5">
+                        <polyline class="sub-arrow" fill="none" stroke="#999" points=".5 .5 4.5 4.5 8.5 .5"></polyline>
+                      </svg></a>
+                
+                <ul class="sub">
+                {{ range .Children }}
+                    <li>
+                        <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+                    </li>
+                {{ end }}
+                </ul>
+                
+            </li>
+            {{ else }}
+            <li>
+                    <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+            </li>
+            {{ end }}
+        
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+{{ end }}
+<!--end header-->
+
+{{ if in .template "accordian" }}
+        <h2>FAQ</h2>
+        
+<div class="accordion">
+{{ range $index, $accordian_sections := .sections }}
+<div class="accordion-item">
+    <a class="accordion-title" href="#accordion-{{ $index }}">{{ .title }}</a>
+    <div id="accordion-{{ $index }}" class="accordion-content">
+        {{ .text | safeHTML }}
+    </div>
+</div>
+{{ end }}
+</div>
+{{ end }}
+<!--end accordian element-->
+
+<!--start button element-->
+
+{{ if in .template "button" }}
+    <!--set default button and conditional styles for non default-->
+    {{ $button_id := $scratch.Get "section_id" }}
+
+    {{ if in .button_type "primary" }}
+    {{ $primary_button := $.global.Site.Data.layouts.buttons.primary_button }}
+        {{ if or (.background_color) (.border) }}
+        <style>
+                {{ print "#" $button_id "-" $index " {" | safeHTML }}
+                    background: {{ .background_color }};
+                    {{ if .border }}
+                    border: {{ .border }}px solid{{ if .border_color }} {{ .border_color }}{{ end }};
+                    {{ end }}
+                {{ print "}" | safeHTML }}
+       </style>
+        {{ end }}
+    <div class="col-12 flex-item flex-container h_content_{{ $scratch.Get "h_content" | default "center" }}{{ if .padding_bottom }} padding-{{ .padding_bottom | lower }}-bottom{{ end }}">    
+    <a id="{{ print $button_id "-" $index }}" class="button-fill {{ $primary_button.animation_style }}" href="{{ .link }}">{{ .text }}</a>
+    </div>
+    {{ end }}
+    {{ if in .button_type "alternate"}}
+    {{ $alternate_button := $.global.Site.Data.layouts.buttons.alternate_button }}
+        {{ if or (.background_color) (.border) }}
+        <style>
+        {{ print "#" $button_id "-" $index }} {
+            background: {{ .background_color }};
+            {{ if .border }}
+            border: {{ .border }}px solid{{ if .border_color }} {{ .border_color }}{{ end }};
+            {{ end }}
+        }
+        </style>
+        {{ end }}
+        <div class="col-12 flex-item flex-container h_content_{{ $scratch.Get "h_content" | default "center" }}">    
+    <a id="{{ print $button_id "-" $index }}" class="button-fill {{ $alternate_button.animation_style }}" href="{{ .link }}"><span>{{ .text }}{{ if in $alternate_button.animation_style "arrow" }}<svg class="color-white" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="32px" height="32px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+        <g>
+            <line fill="none" stroke="#ffffff" stroke-width="6" stroke-miterlimit="10" x1="0" y1="32" x2="63" y2="32"></line>
+        </g>
+        <polyline fill="none" stroke="#ffffff" stroke-width="6" stroke-linejoin="bevel" stroke-miterlimit="10" points="54,41 63,32 
+                    54,23 "></polyline>
+        </svg>{{ end }}</span></a>
+        </div>
+    {{ end }}
+{{ end }}
+<!--end button element-->
+
+<!--start slider element-->
+{{ if in .template "carousel"}}
+    
+<div class="flick-slider" >
+    <div class="carousel-cell column-2 col-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/orange-tree.jpg" alt="orange tree" />
+    </div>
+    <div class="carousel-cell column-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/one-world-trade.jpg" alt="One World Trade" />
+    </div>
+    <div class="carousel-cell column-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/drizzle.jpg" alt="drizzle" />
+    </div>
+    <div class="carousel-cell column-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/cat-nose.jpg" alt="cat nose" />
+    </div>
+    <div class="carousel-cell column-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/contrail.jpg" alt="contrail" />
+    </div>
+    <div class="carousel-cell column-2">
+            <img class="lazyload" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/82/golden-hour.jpg" alt="golden hour" />
+    </div>
+</div>
+<style>
+.flickity-viewport {
+    overflow: visible;
+}
+.carousel-cell {
+  width: 40%;
+  height: 400px;
+  margin-right: 10px;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.flick-slider').flickity({
+    // options
+    //adds class to groups of cells for styling
+    //could make cells bigger etc.
+    groupCells: false,
+    //sticky scroll
+    freeScroll: false,
+    prevNextButtons: true,
+    pageDots: false,
+    cellAlign: 'left',
+    adaptiveHeight: true,
+    setGallerySize: true,
+    //infinite scroll
+    wrapAround: true,
+    //add a number instead of true for control over time
+    autoPlay: false,
+    pauseAutoPlayOnHover: true,
+    //enable lightbox on click. DO NOT USE FOR NOW
+    fullscreen: false,
+    lazyLoad: true
+    
+    });
+});
+</script>
+{{ end }}
+<!--end carousel-->
+
+<!--start list element-->
+{{ if in .template "list" }}
+
+    {{ if .image }}
+        {{ $scratch.Set "list-img" .image }}
+    {{ end }}
+
+    {{ if .size }}
+        {{ $list_img_size := print " col-" .size }}
+        {{ $scratch.Set "list_img_size" $list_img_size }}
+    {{ else }}
+        {{ $scratch.Set "list_img_size" " col-2" }}
+    {{ end }}
+
+    {{ if .content_width }}
+        {{ $list_width := print " maxwidth-" .content_width | lower}}
+        {{ $scratch.Set "list_width" $list_width }}
+    {{ end }}
+
+    {{ if .v_content }}
+        {{ $list_content_v := print " v_content_" .v_content | lower }}
+        {{ $scratch.Set "list_content_v" $list_content_v }}
+    {{ else }}
+        {{ $scratch.Set "list_content_v" " v_content_center" }}
+    {{ end }}
+
+    {{ if .h_content }}
+        {{ $list_img_h := print " h_content_" .h_content | lower }}
+        {{ $scratch.Set "list_img_h" $list_img_h }}
+    {{ else }}
+        {{ $scratch.Set "list_content_h" "h_content_center" }}
+    {{ end }}
+
+    {{ if .h_self }}
+        {{ $list_hs := print " justify-self-" .h_self | lower }}
+        {{ $scratch.Set "list_hs" $list_hs }}
+    {{ else }}
+        {{ $scratch.Set "list_hs" "justify-self-start" }}
+    {{ end }}
+
+    {{ if .padding_bottom }}
+        {{ $list_space := print " padding-" .padding_bottom "-bottom" | lower }}
+        {{ $scratch.Set "list_space" $list_space }}
+    {{ end }}
+
+    {{ $list_height := .height }}
+
+{{ if .image }}
+    {{ range .list_items }}
+        <!--for a list item with an img override, change the image var-->
+        {{ if .image }}
+            {{ $scratch.Set "list-img" .image }}
+        {{ end }}
+        {{ if gt $list_height 50 }}
+        <style>
+        
+            @media (max-width: 480px) {
+            .list-img img {
+                height: 50px;
+            }
+        }
+        
+        </style>
+        {{ end }}
+    <div class="flex-container{{ $scratch.Get "list_content_v" }}{{ $scratch.Get "list_space" }}{{ $scratch.Get "list_width" }}{{ $scratch.Get "list_hs" }}">
+        <div class="flex-container flex-item list-img{{ $scratch.Get "list_img_size" }}{{ $scratch.Get "list_img_h" }}">
+            <img{{ if $list_height }} style="height: {{ $list_height }}"{{ end }} src="{{ $scratch.Get "list-img" }}" class="lazyload">
+        </div>
+
+        <div class="list-text text-left col-10">
+                {{ if .text }}{{ .text | safeHTML }}{{ end }}
+        </div>
+    </div>
+    {{ end }}<!--range-->
+{{ end }}<!--image-->
+{{ else }}<!--list else-->
+{{ range .list_items }}
+<div class="flex-container">    
+        <div class="list-text col-12">
+            {{ if .text }}{{ .text | safeHTML }}{{ end }}
+        </div>
+    </div>
+{{ end }}<!--range-->
+
+    <!--reset scratch-->
+{{ if .image }}
+    {{ $scratch.Set "list-img" .image }}
+{{ end }}
+{{ end }}<!--end if template list-->
+<!--end list element-->
+
+<!--start list element-->
+{{ if in .template "image" }}
+{{ $upload_image := resources.Get .image }}
+<img class="lazyload" src="{{ $upload_image.Permalink }}">
+{{ end }}
+
+<!--image mobile sizes and lazy load options http://afarkas.github.io/lazysizes/#examples-->
+<!--use resources function to generate the images-->
+<!--<img
+	alt=""
+	sizes="(min-width: 1000px) 930px, 90vw"
+	data-srcset="small.jpg 500w,
+		medium.jpg 640w,
+		big.jpg 1024w"
+	data-src="medium.jpg"
+	class="lazyload" />-->
+
+<!--end list element-->
+
+<!--start contact form element-->
+{{ if in .template "contact"}}
+<form name="{{ $scratch.Get "page_slug" }}" method="POST" netlify class="contact-base flex-container flex-item wrap h_content_space-between">
+{{ range $index, $contact_fields := .contact_form_fields }}
+{{ if .template }}
+    {{ if in .template "drop" }}
+    <div class="col-{{ .size | default "12" }} flex-item">
+    <label>{{ .label }}:
+    <select name="dropdown" tabindex="1">
+        {{ range $index, $drop_options :=  .options }}
+        <option value="{{ . }}">{{ . }}</option>
+
+        {{ end }}
+    </select>
+    </label>
+    </div>
+    {{ end }}
+
+    {{ if in .template "radio" }}
+    <div class="col-{{ .size | default "12" }} flex-item flex-container">
+            <input type="radio" id="contactChoice1"
+             name="contact" value="email">
+            <label for="contactChoice1">Email</label>
+        
+            <input type="radio" id="contactChoice2"
+             name="contact" value="phone">
+            <label for="contactChoice2">Phone</label>
+        
+            <input type="radio" id="contactChoice3"
+             name="contact" value="mail">
+            <label for="contactChoice3">Mail</label>
+          </div>
+    {{ end }}
+
+    {{ if in .template "text" }}
+        {{ range $index, $text_options :=  .options }}
+    <div class="col-{{ .size | default "12" }} flex-item">
+       
+        <label>{{ .label }} {{ if eq .field_type "text area" }}<textarea id="{{ print .label "-" $index | lower | urlize }}" name="message"></textarea>{{ else }}<input id="{{ print .label "-" $index | lower | urlize }}" type="text" name="{{ print .label "-" $index | lower | urlize }}" />{{ end }}
+        </label>
+    </div>
+        {{ end }}
+    {{ end }}
+    
+{{ end }}<!--range contact_fields-->
+{{ else }}<!--range-->
+
+<!--show default set fields if there are no custom fields-->
+<div class="col-12 flex-item"><label>Your Name: <input type="text" name="name" /></label></div>
+<div class="col-12 flex-item"><label>Your Email: <input type="email" name="email" /></label></div>
+<div class="col-12 flex-item">
+<label>Your Email: 
+<div class="select" tabindex="1">
+        <input class="selectopt" name="test" type="radio" id="opt1" checked>
+        <label for="opt1" class="option">Oranges</label>
+        <input class="selectopt" name="test" type="radio" id="opt2">
+        <label for="opt2" class="option">Apples</label>
+        <input class="selectopt" name="test" type="radio" id="opt3">
+        <label for="opt3" class="option">Grapefruit</label>
+        <input class="selectopt" name="test" type="radio" id="opt4">
+        <label for="opt4" class="option">Bananas</label>
+        <input class="selectopt" name="test" type="radio" id="opt5">
+        <label for="opt5" class="option">Watermelon</label>
+        </div>
+</label>
+</div>
+<div class="col-12 flex-item"><label>Message: <textarea name="message"></textarea></label></div>
+
+{{ end }}<!--if template-->   
+<div class="col-12 flex-item"><button class="button-fill" type="submit">Send</button></div> 
+</form>
+
+{{ end }}<!--if template contact-->
+<!--end contact form element-->
+
+        {{ end }}
+        </div><!--elements wrapper-->
+        <!--reset scratch-->
+        {{ $scratch.Set "elements_background" "none" }}
+    </div>
+        
+    {{ end }}<!--column-->
+{{ end }}<!--row range-->
+</div>
+
+{{ end }}<!--if page row-->
+{{ $scratch.Set "container_size" $container }}
+{{ $scratch.Set "h_content" $h_content }}
+{{ $scratch.Set "v_content" $v_content }}
+<!--copy above code for row2-->

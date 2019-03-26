@@ -1,0 +1,171 @@
+
+{{ range .Params.stacks }}
+{{ if in .template "header" }}
+
+{{ if eq .overlay_header true }}
+{{ $.Scratch.Set "overlay_header" " overlap" }}
+{{ else if eq .overlay_header false }}
+{{ $.Scratch.Set "overlay_header" "" }}
+
+{{ else if eq .Site.Data.layouts.header.default_header.overlay_header true }}
+{{ $.Scratch.Set "overlay_header" " overlap" }}
+{{ end }}
+
+{{ end }}
+{{ end }}
+{{ if eq .Site.Data.layouts.header.default_header.enabled true }}
+<header class="masthead{{ $.Scratch.Get "overlay_header" }}" role="banner">    
+{{ with .Site.Data.layouts.header.default_header }}
+
+{{ .logo_font_family | safeHTML }}
+
+{{ $logo_font_css := print "<style>.logo a {" .logo_font_css "}</style>" | safeHTML }}
+
+        {{ $logo_font_css }}
+
+{{ if .stacks }}
+{{ range $index, $header_stacks := .stacks }}
+
+    {{ if in .template "builder" }}
+    <!--section loop-->
+    {{ $clean_slug := replace .Params.slug "/" "" }}
+    {{ $page_slug := $clean_slug }}
+    
+    {{ if .id }}
+    {{ $.Scratch.Set "section_id" .id}}
+    {{ else }}
+    {{ $id := print "section-" $index }}
+    {{ $.Scratch.Set "section_id" $id}}
+
+    {{ end }}
+    {{ if or (.background_image) ( .background_color ) }}
+    <style>
+    {{ if .background_color }}
+    section#{{ $.Scratch.Get "section_id" }} {
+      background-color: {{ .background_color }};
+    }
+    {{ end }}
+    {{ if .background_image }}
+    section#{{ $.Scratch.Get "section_id" }} {
+      background-image: url({{ .background_image }});
+    }
+    {{ end }}
+    </style>
+    {{ end }}
+      
+    <nav class="padding-{{ .section_top_padding | default "none" | lower }}-top padding-{{ .section_bottom_padding | default "none" | lower}}-bottom{{ if eq .full_height_section true }} full-height{{ end }}{{ if .background_parallax }} background-parallax{{ end }}">
+      {{ partial "sections/build.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+    </nav>
+      
+    {{ end }}
+    <!-- end section-level loop-->
+    
+{{ end }}
+{{ else }}
+<nav class="container flex-container h_content_space-between padding-{{ .nav_padding | default "none" | lower }}">
+    {{ if eq .logo_li false }}    
+    <div class="logo col-{{ .logo_column_size | default "4" }} flex-container v_content_center">
+            {{ if and (eq .logo_title_image true) ( .image ) }}
+                <a class="logo-a flex-container v_content_center" href="{{ if .logo_url }}{{ .logo_url }}{{ else }}{{ .Site.BaseURL }}{{ end }}">
+                <img src="{{ .image }}"> 
+                {{ if .logo_title }}{{ .logo_title | safeHTML }}{{ else }}{{ $.Site.Title }}{{ end }}
+                </a>
+            {{ else if .image }}
+            <a class="flex-container v_content_center" href="{{ if .logo_url }}{{ .logo_url }}{{ else }}{{ .Site.BaseURL }}{{ end }}">
+                <img src="{{ .image }}">
+            </a>
+            {{ end }}
+            </div>
+    
+    <div id="desktop-menu" class="col-{{ .link_column_size | default "8" }} flex-container v_content_center h_content_space-between">
+    {{ range $.Site.Menus.main }}
+    {{ if .HasChildren }}
+    <li class="with-sub">        
+        <a class="nav-link" href="{{ .URL }}">{{ .Name }} <svg width="9" height="5" viewBox="0 0 9 5">
+                <polyline class="sub-arrow" fill="none" stroke="#999" points=".5 .5 4.5 4.5 8.5 .5"></polyline>
+              </svg></a>
+        
+        <ul class="sub">
+        {{ range .Children }}
+            <li>
+                <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+            </li>
+        {{ end }}
+        </ul>
+        
+    </li>
+    {{ else }}
+    <li>
+            <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+    </li>
+    {{ end }}
+
+    {{ end }}
+</div>
+{{ else if eq .logo_li true }}  
+<div id="desktop-menu" class="col-{{ .link_column_size | default "12" }} flex-container v_content_center h_content_space-between">
+        <li><a class="logo-a" href="{{ if .logo_url }}{{ .logo_url }}{{ else }}{{ .Site.BaseURL }}{{ end }}"><img src="{{ .image }}"></a></li> 
+        {{ range $.Site.Menus.main }}
+        {{ if .HasChildren }}
+        <li class="with-sub">        
+            <a class="nav-link" href="{{ .URL }}">{{ .Name }} <svg width="9" height="5" viewBox="0 0 9 5">
+                    <polyline class="sub-arrow" fill="none" stroke="#999" points=".5 .5 4.5 4.5 8.5 .5"></polyline>
+                  </svg></a>
+            
+            <ul class="sub">
+            {{ range .Children }}
+                <li>
+                    <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+                </li>
+            {{ end }}
+            </ul>
+            
+        </li>
+        {{ else }}
+        <li>
+                <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+        </li>
+        {{ end }}
+    
+        {{ end }}
+    </div>
+{{ end }}
+<button class="hamburger hamburger--collapse-r" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+</button>
+
+<div id="mobile-menu" class="contain-tablet">
+    <div>
+        {{ range $.Site.Menus.main }}
+        {{ if .HasChildren }}
+        <li class="with-sub">        
+            <a class="nav-link" href="{{ .URL }}">{{ .Name }} <svg width="9" height="5" viewBox="0 0 9 5">
+                    <polyline class="sub-arrow" fill="none" stroke="#999" points=".5 .5 4.5 4.5 8.5 .5"></polyline>
+                  </svg></a>
+            
+            <ul class="sub">
+            {{ range .Children }}
+                <li>
+                    <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+                </li>
+            {{ end }}
+            </ul>
+            
+        </li>
+        {{ else }}
+        <li>
+                <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+        </li>
+        {{ end }}
+    
+        {{ end }}
+    </div>
+</div>
+</nav>
+{{ end }}
+
+</header>
+{{ end }}
+{{ end }}

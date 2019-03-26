@@ -1,0 +1,37 @@
+<!--<link rel="stylesheet" href="{{ "css/main.css" | absURL }}">-->
+
+{{ $styles := resources.Get "scss/main.scss" | resources.ExecuteAsTemplate "style.main.scss" . | toCSS | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $styles.Permalink }}" integrity="{{ $styles.Data.Integrity }}" media="screen">
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+{{ partial "presets.html" . | safeHTML }}
+
+<!--highlight css-->
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+<!--js-->
+
+{{ $vendor := resources.Get "js/vendor/jquery.min.js" }}
+{{ $jsplugin0 := resources.Get "js/main.js" }}
+{{ $jsplugin1 := resources.Get "js/plugins/flickity.pkgd.min.js" }}
+{{ $jsplugin1_1 := resources.Get "js/plugins/fullscreen.js" }}
+{{ $jsplugin2 := resources.Get "js/plugins/highlight.min.js" }}
+{{ $jsplugin3 := resources.Get "js/plugins/aos.js" }}
+{{ $jsplugin4 := resources.Get "js/plugins/lazysizes.min.js" }}
+
+{{ $scripts := slice $vendor $jsplugin0 $jsplugin1 $jsplugin1_1 $jsplugin2 $jsplugin3 $jsplugin4 | resources.Concat "app.js" | minify | fingerprint }}
+
+{{ $js := .Resources.Match "js/plugins/*.js" }}
+
+{{ with $js }}
+{{ $jsCombined := . | resources.Concat "main.js" }}
+Permalink: {{ $jsCombined.Content }}|{{ $jsCombined.RelPermalink }}
+{{ end }}
+<script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}" media="screen"></script>
+
+<!--conditionally load and inline scripts-->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fetch-inject" media="screen"></script>

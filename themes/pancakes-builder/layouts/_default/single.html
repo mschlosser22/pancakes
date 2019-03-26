@@ -1,0 +1,146 @@
+{{ define "main" }}
+
+<!--https://stackoverflow.com/questions/38930144/keep-input-value-after-refresh-page-->
+
+<!--<p>Main menu:</p>
+{{ range .Site.Menus.main }}
+<li><a href="{{ .URL }}">{{ .Name }}</a></li>
+{{ end }}-->
+<!--section loop-->
+
+{{ $clean_slug := replace .Params.slug "/" "" }}
+{{ $page_slug := $clean_slug }}
+    
+<!--start the stack loop to return page sections-->
+<!--check for any values in the stacks field type-->
+
+{{ if .Params.stacks }}
+<!--use index to add a count to the range-->
+{{ range $index, $stacks := .Params.stacks }}
+  <!--use scratch or a var to pass the template name. We have to do this since context changes in nested ranges-->
+    {{ $.Scratch.Set "section_template_name" .template }}
+    {{ $.Scratch.Set "section_index" $index | safeHTML }}
+    <!--sometimes we might manually set an ID in the ID field-->
+    {{ if .id }}
+      {{ $.Scratch.Set "section_id" .id}}
+    <!--usually we won't so the section id should use the index to generate a unique name-->
+    {{ else }}
+      {{ $id := print "section-" $index }}
+      {{ $.Scratch.Set "section_id" $id}}
+    {{ end }}
+
+    <!--check for any style attributes that should be inlined. Use style tags instead of the style attribute-->
+    <!--adjust this if statement for every available property-->
+    {{ partial "sections/style.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+        
+  {{ if in .template "options" }}
+  <!--show nothing so we don't have an empty section-->
+  <!--there currently isn't an option block but there might be-->
+  {{ else if in .template "custom" }}
+
+  {{ else if and (in .template "select-part") (.part) }}
+  <!--grab a page part if that field is selected within a block-->
+  <!--a page part is a pre-built section in a post type called "Parts"-->
+  <!--set the scratch value so we can pass this context to another context-->
+  
+  {{ $.Scratch.Set "part_exists" .part }}
+
+  <!--get the part values from the other page-->
+  <!--using where, we can constrain the range to only return pages within the parts section-->
+  {{ range $index, $parts_stacks := where $.Site.Pages "Section" "parts" }}
+  <!--since it's a single stack reference the front matter using params instead of the block context "."-->
+
+    <!--we need to compare the path in the select parts dropdown within our page block with the path we looked up in our range-->
+    <!--we can then return the part with a matching file path to the path we selected in our dropdown-->
+    <!--get the current page's file-->
+    {{ $new_file_path := replace .File.Path "\\" "-" | safeHTML }}
+    <!--sanitize the URL so that they use the same format and we can compare them-->
+    {{ $new_file_path_clean := replace $new_file_path "/" "-" | safeHTML }}
+    
+    <!--our page part referenced in the block-->
+    {{ $part_var := $.Scratch.Get "part_exists" }}
+    <!--sanitize the name-->
+    {{ $change_this_file := replace $part_var "/" "-" | safeHTML }}
+
+    {{ $sanitize_this_link := replace $change_this_file "." "-" | safeHTML }}
+
+    {{ $.Scratch.Set "part_preview_link" $sanitize_this_link }}
+
+    <!--check if the page select part dropdown path equals the section path page file path-->
+    {{ if eq $change_this_file $new_file_path_clean }}
+      <!--if equal, return block values-->
+      
+      <!--this is the same as the normal block section style options-->
+        <!--maybe include a section style file-->
+      {{ range .Params.stacks }}
+      
+      
+      <!--vars are page level so need to prefix params-->
+      
+      <section id="{{ $.Scratch.Get "section_id" }}" data-section-name="{{ $.Scratch.Get "section_template_name" }}" class="padding-{{ .section_top_padding | default "none" | lower }}-top padding-{{ .section_bottom_padding | default "none" | lower}}-bottom{{ if eq .full_height_section true }} full-height{{ end }}{{ if .background_parallax }} background-parallax{{ end }}">
+        {{ partial "sections/style.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+        
+        {{ partial "sections/dbg-menu.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+        
+        {{ partial "sections/build.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+        </section>
+      {{ end }}
+    {{ end }}<!--if file name equals-->
+    
+  {{ end }}<!--end parts stacks range-->
+
+    <!--show nothing so we don't have an empty section-->
+  {{ else }}<!--outer scope - if not in template options or select-part display normal block-->
+  
+  <section id="{{ $.Scratch.Get "section_id" }}" data-section-name="{{ $.Scratch.Get "section_template_name" }}" class="padding-{{ .section_top_padding | default "none" | lower }}-top padding-{{ .section_bottom_padding | default "none" | lower}}-bottom{{ if eq .full_height_section true }} full-height{{ end }}{{ if .background_parallax }} background-parallax{{ end }}">
+    {{ partial "sections/style.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+    {{ partial "sections/dbg-menu.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+        
+    {{ partial "sections/build.html" (dict "page" . "global" $ "page_slug" $page_slug ) }}
+  </section>
+  
+  {{ end }}<!--end if statement that checks templates-->
+        
+{{ end }}<!--end stacks range-->
+        
+{{ else }}<!--if no block within a stack-->
+
+  {{ if eq .Params.layout "part-preview" }}
+  <!--show debug page conditional info-->
+  <div class="no-sections">
+    <h1>This is just a preview of this Part</h1>
+    <p>It's not indexed on Google :)</p>
+  </div>
+  {{ else }}
+  <!--show info on blank page if no block is added-->
+  <div class="no-sections">
+    <h1>You need to add a section</h1>
+    <p>Add a section to the page builder in your page editor.</p>
+  </div>
+  {{ end }}
+
+{{ end }}<!-- end if blocks exist - section loop-->
+
+
+<script>
+  AOS.init();
+</script>
+
+
+{{ $file_path := replace .File.Path "." "-" }}
+
+{{ $file_path_clean := replace $file_path "/" "-" }}
+{{ $file_path_cleaned := replace $file_path_clean " " "" }}
+
+{{ $.Scratch.Set "preview_page_path" $file_path_cleaned }}
+{{ $preview_sections := trim .Sections "(0)" | lower }}
+{{ $.Scratch.Set "preview_link" $preview_sections }}    
+<!--move this font script-->
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+{{ $debug_dict_options := (dict "page" . "global" $) }}
+{{ $debugjs := resources.Get "js/debug.js" | resources.ExecuteAsTemplate "js.debugger.js" $debug_dict_options }}
+
+{{ $debugjsgo := $debugjs | resources.ExecuteAsTemplate "js.debugger.js" $debug_dict_options }}
+<script type="text/javascript" src="{{ $debugjs.Permalink }}" media="screen"></script>
+
+{{ end }}

@@ -1,0 +1,466 @@
+/* slash graphic*/
+.slashGraphic-slash {
+ -moz-transition-property: none !important;
+ -moz-transform: none !important;
+}
+.home svg:not(:root) {
+    overflow: visible;
+}
+.home section {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+ 
+.home .inner {
+  position: absolute;
+  width: 95%;
+  height: 100%;
+}
+
+/* Content of the following sections aligned next to the iphone */
+section .innerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, -50%);
+  text-align: left;
+}
+
+#poster {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  left: 0%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  transform-style: preserve-3d;
+}
+
+#poster .poster-image {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  left: 0%;
+}
+
+#poster .imageA, #poster .imageB, #poster .imageC {
+  opacity: 0;
+}
+#poster .imageA.fade-in, #poster .imageB.fade-in, #poster .imageC.fade-in, #poster .imageD.fade-in  {
+  opacity: 1;
+}
+
+//svg stuff
+.home svg.poster {
+  position: relative;
+  padding-right: 5%;
+  transform-style: preserve-3d;
+  z-index: 999;
+}
+//
+.night-header.home .head-nav {
+  position: fixed;
+}
+// Hero ------------------------------------------------------------------------
+.head-nav .logo-link a span {
+  display: none;
+}
+.hero {
+  position: relative;
+  background: #000;
+}
+.loading .home .head-nav .logo-link {
+  display: block;
+}
+.home .head-nav .logo-link {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 1s ease;
+}
+.home .logo-text {
+  max-width: 200px
+}
+.home .logo-text .bold {
+  font-weight: 900;
+}
+.home .logo-text .thin {
+  font-weight: 200;
+}
+.home .poster {
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.home .poster .shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: -webkit-linear-gradient(315deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%);
+  z-index: 100;
+}
+.home .poster div[class*="layer-"] {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  -webkit-transition: 0.1s;
+          transition: 0.1s;
+}
+.home .caption {
+  padding-left: 20px;
+  font-style: italic;
+  color: #808080;
+  text-align: left;
+}
+.home .section-logo {
+  align-items: center;
+  justify-content: flex-start;
+}
+// SVG logo animation
+svg .clss-1 {
+  -webkit-animation: widthAni 4s ease-in-out;
+  animation: widthAni 4s ease-in-out;
+  -webkit-transform-origin: center right;
+  -ms-transform-origin: center right;
+  transform-origin: center right;
+}
+svg .clss-2 {
+  -webkit-animation: springOut 4s ease-in;
+  animation: springOut 4s ease-in;
+}
+svg .clss-3 {
+  -webkit-animation: springOutAgain 4s ease-in;
+  animation: springOutAgain 4s ease-in;
+}
+@-webkit-keyframes widthAni {
+  0% {
+    -webkit-transform: translate(-30%, 0) scaleX(0);
+    transform: translate(-30%, 0) scaleX(0);
+  }
+  20%, 75% {
+    -webkit-transform: translate(0, 0) scaleX(1);
+    transform: translate(0, 0) scaleX(1);
+  }
+}
+@keyframes widthAni {
+  0% {
+    -webkit-transform: translate(-30%, 0) scaleX(0);
+    transform: translate(-30%, 0) scaleX(0);
+  }
+  20%, 75% {
+    -webkit-transform: translate(0, 0) scaleX(1);
+    transform: translate(0, 0) scaleX(1);
+  }
+}
+@-webkit-keyframes springOut {
+  0%, 20% {
+    -webkit-transform: translate(-21%, 0%);
+    transform: translate(-21%, 0%);
+    visibility: hidden;
+  }
+  21% {
+    -webkit-transform: translate(-20.5%, 0%);
+    transform: translate(-20.5%, 0%);
+    visibility: visible;
+  }
+  27% {
+    -webkit-transform: translate(-4.75%, 0%);
+    transform: translate(-4.75%, 0%);
+  }
+  31%, 55% {
+    -webkit-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+  }
+}
+@keyframes springOut {
+  0%, 20% {
+    -webkit-transform: translate(-21%, 0%);
+    transform: translate(-21%, 0%);
+    visibility: hidden;
+  }
+  21% {
+    -webkit-transform: translate(-20.5%, 0%);
+    transform: translate(-20.5%, 0%);
+    visibility: visible;
+  }
+  27% {
+    -webkit-transform: translate(-4.75%, 0%);
+    transform: translate(-4.75%, 0%);
+  }
+  31%, 55% {
+    -webkit-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+  }
+}
+@-webkit-keyframes springOutAgain {
+  0%, 20% {
+    -webkit-transform: translate(-41.5%, 0%);
+    transform: translate(-41.5%, 0%);
+    visibility: hidden;
+  }
+  21% {
+    -webkit-transform: translate(-41%, 0%);
+    transform: translate(-41%, 0%);
+    visibility: visible;
+  }
+  27% {
+    -webkit-transform: translate(-9.5%, 0%);
+    transform: translate(-9.5%, 0%);
+  }
+  31%, 55% {
+    -webkit-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+  }
+}
+@keyframes springOutAgain {
+  0%, 20% {
+    -webkit-transform: translate(-41.5%, 0%);
+    transform: translate(-41.5%, 0%);
+    visibility: hidden;
+  }
+  21% {
+    -webkit-transform: translate(-41%, 0%);
+    transform: translate(-41%, 0%);
+    visibility: visible;
+  }
+  27% {
+    -webkit-transform: translate(-9.5%, 0%);
+    transform: translate(-9.5%, 0%);
+  }
+  31%, 55% {
+    -webkit-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+  }
+}
+@media screen and (min-width: $screen-laptop) {
+  .mobile-poster {
+    display: none;
+  }
+}
+@media screen and (max-width: $screen-desktop-s) {
+  .home h3 {
+    font-size: 28px;
+  }
+}
+@media screen and (max-width: $screen-laptop) {
+  .home .desktop-poster {
+    display: none;
+  }
+  .home .s1 .scrollmagic-pin-spacer {
+    display: none !important;
+  }
+}
+@media screen and (max-width: $screen-tablet) {
+  .home svg.poster {
+      position: relative;
+      padding-right: 0;
+      max-width: 350px;
+      margin: 0 auto;
+      display: block;
+      padding-bottom: 40px;
+  }
+  .home .hero .maxwidth-m {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .home .hero .maxwidth-m > div {
+    margin: 0 auto;
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+  .home .hero .logo-string {
+    justify-content: flex-start;
+  }
+  .home .hero {
+    padding-top: 90px;
+    padding-bottom: 90px;
+  }
+  .home .hero {
+    padding-top: 0px;
+  }
+  .home .logo-text {
+    margin: 0 auto;
+  }
+  .home section .innerText {
+    position: absolute;
+    top: 40%;
+    left: 0%;
+    width: 100%;
+    text-align: center;
+    max-height: 65%;
+    transform: translate(0,0);
+  }
+  .home .inner {
+    max-width: 380px;
+    margin: 0 auto;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+  }
+  .home .section-logo {
+    justify-content: center;
+  }
+	.home .section-logo {
+	  justify-content: center;
+	}
+	.home .contain-image .section-logo {
+	  flex-basis: 30%;
+	}
+  #poster {
+    width: 100%;
+    top: 10%;
+    max-height: 25%;
+  }
+  #poster .poster-image {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    left: 0%;
+  }
+}
+@media screen and (min-width: $screen-mobile-l) {
+  .mobile-poster .mobile-version {
+    display: none;
+  }
+  .home .mobile-down {
+    display: none;
+  }
+}
+@media screen and (max-width: $screen-mobile-l) {
+  .home .mobile-down {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%,0);
+    z-index: 999;
+  }
+  .home .mobile-down:hover {
+    cursor: pointer;
+  }
+  @keyframes slideInBar {
+    0% {
+        height: 0
+    }
+
+    100% {
+        height: 2.4em
+    }
+  }
+  .mobile-down__bar {
+    animation-name: slideInBar;
+    animation-delay: 350ms;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.37, -0.01, 0, 1.01);
+    background: #fff;
+    content: '';
+    display: block;
+    height: 0;
+    opacity: 0.8;
+    width: 1.1px;
+    margin: 0 auto;
+    z-index: 999;
+  }
+  .mobile-poster .mobile-version img {
+    top: 50%;
+    position: absolute;
+    left: 0%;
+    transform: translate(0,-50%);
+  }
+  .mobile-poster .tablet-version {
+    display: none;
+  }
+  .logo-text.mobile-version {
+    display: none;
+  }
+  .down.mobile-version {
+    display: none;
+  }
+  .home .hero .maxwidth-m>div {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .home .inner {
+    max-width: 200px;
+  }
+  .home svg.poster {
+      max-width: 280px;
+  }
+  .home .hero {
+    padding-top: 0px;
+  }
+  .home h1 {
+    font-size: 28px;
+  }
+  .home h3 {
+    font-size: 18px;
+  }
+  .home .caption {
+    margin-top: 0px;
+    margin-bottom: 15px;
+  }
+  section .innerText {
+    position: absolute;
+    top: 60%;
+    left: 0%;
+    width: 100%;
+    transform: translate(0, -50%);
+    text-align: center;
+  }
+}
+@media screen and (max-width: $screen-mobile-s) {
+  .home section .innerText {
+    top: 35%;
+    max-height: 65%;
+  }
+  .home .inner {
+    max-width: 150px;
+  }
+  .home .hero .maxwidth-m>div {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .home #hero .inner {
+    max-width: 245px;
+  }
+  .home #hero h1 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .home h1 {
+    font-size: 24px;
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+  .home h3 {
+    font-size: 20px;
+    margin-bottom: 0px;
+  }
+  .home .section-logo {
+    margin-top: 0px;
+  }
+  .home .contain-image {
+    margin: 0;
+  }
+  .home .innerText .button-fill {
+    padding: 15px 22px;
+  }
+  .home .caption {
+    font-size: 11px;
+    font-weight: 900;
+    margin: 25px 0;
+  }
+}
